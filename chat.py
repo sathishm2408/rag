@@ -1,24 +1,31 @@
 from dotenv import load_dotenv
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+# from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
+# from qdrant_client import QdrantClient
 from langchain_qdrant import QdrantVectorStore
 from openai import OpenAI
 
 load_dotenv()
 
-client = OpenAI(
-    api_key=os.getenv("GEMINI_API_KEY"),
-    base_url=os.getenv("BASE_URL")
-)
+client = OpenAI()
 
 # Gemini Developer API
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="gemini-embedding-2-preview"
+# embeddings = GoogleGenerativeAIEmbeddings(
+#     model="gemini-embedding-2-preview"
+# )
+
+embeddings = OpenAIEmbeddings(
+    model="text-embedding-3-large"
 )
+
+# qdrant_client = QdrantClient(url="http://localhost:6333", prefer_grpc=False, timeout=60)  # 60s
 
 vector_db = QdrantVectorStore.from_existing_collection(
     embedding=embeddings,
     collection_name="documents_rag",
-    url="http://localhost:6333"
+    url="http://localhost:6333",
+    timeout=60,  # 60s
+    # client=qdrant_client
 )
 
 user_query = input("Enter your query: ")
@@ -39,7 +46,7 @@ SYSTEM_PROMPT = f"""
 """
 
 response = client.chat.completions.create(
-    model="gemini-3.5-flash",
+    model="gpt-4o-mini",
     messages=[
         { "role": "system", "content":SYSTEM_PROMPT  },
         { "role": "user", "content":user_query  },

@@ -1,9 +1,9 @@
 from pathlib import Path
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitter import RecursiveCharacterTextSplitter
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-# from langchain_openai import OpenAIEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+# from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 
 load_dotenv()
@@ -18,14 +18,14 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=10
 chunks = text_splitter.split_documents(doc)
 
 
-# embeddings = OpenAIEmbeddings(
-#     model="text-embedding-3-large"
-# )
+embeddings = OpenAIEmbeddings(
+    model="text-embedding-3-large"
+)
 
 # Gemini Developer API
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="gemini-embedding-2-preview"
-)
+# embeddings = GoogleGenerativeAIEmbeddings(
+#     model="gemini-embedding-2-preview"
+# )
 
 vector_store = QdrantVectorStore.from_documents(
     documents=chunks,
